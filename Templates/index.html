@@ -1,0 +1,66 @@
+{% extends "basecopy.html" %} 
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Sign Up
+{% endblock %}
+
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{url_for('.static', filename='signin.css')}}">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+{% endblock %}
+
+{% block main_content %}
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      var socket = io.connect('http://127.0.0.1:5000');
+
+      socket.on('connect', function() {
+        socket.send('User has connected!');
+      });
+
+      socket.on('message', function(msg) {
+        $("#messages").append('<li>'+msg+'</li>');
+        console.log('Received message');
+      });
+
+      $('#sendbutton').on('click', function() {
+        socket.send($('#myMessage').val());
+        $('#myMessage').val('');
+      });
+    });
+  </script>
+
+	<div class="container">
+	  <form class="form-signin" method="POST" action="/">
+	    <!--h2 class="form-signin-heading">Comentários da Notícia:</h2-->
+	    {{ form.hidden_tag() }}
+	    {{ wtf.form_field(form.topico) }}
+	    {{ wtf.form_field(form.conteudo) }}
+	    <span class="input-group-btn">
+	    <button class="btn btn-default" type="submit">Enviar</button>
+	    </span>
+	  </form>
+  </div> <!-- /container -->
+
+  <!--input type="text" id="myMessage">
+  <button id="sendbutton">Send</button-->
+	
+  <table class="table table-striped">
+    <tr>
+      <td>testandp</td>
+    </tr>
+          
+    {% for msg in messages %}
+      <tr>
+        <td>{{ msg.message }}</td>
+      </tr>
+    {% endfor %} 
+            
+  </table>
+      	
+{% endblock %}
+
